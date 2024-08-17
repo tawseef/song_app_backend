@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
     validate: (value) => validator.isEmail(value),
   },
   password: { type: String, required: true },
-  islogin: { type: Boolean, default: false },
 });
 
 const User = mongoose.model("user", userSchema);
