@@ -2,15 +2,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/user.model");
 
-class Auth {
+class UserService {
   secret = process.env.SECRET;
 
-  // User Signupjoi
+  // User Signup
   signup = async (data) => {
     try {
       const hashedPassword = await this.hashingPassword(data.password);
-      console.log({ ...data, password: hashedPassword });
-      const result = await User.create({ ...data, password: hashedPassword });
+      const result = await User.create({ email: data.email, password: hashedPassword });
       return result;
     } catch (error) {
       throw error;
@@ -29,10 +28,10 @@ class Auth {
     try {
       // Password verification
       const user = await this.verifyPassword(email, password);
-
       if (user) {
         // Token generation
         const token = this.generateWebToken(user._id);
+        
         return {
           isLoggedIn: true,
           userid: user._id,
@@ -50,7 +49,6 @@ class Auth {
   verifyPassword = async (email, password) => {
     try {
       const user = await User.findOne({ email });
-      ////
       const isValid = await bcrypt.compare(password, user.password);
       if (isValid) return user;
       else return null;
@@ -73,4 +71,4 @@ class Auth {
   };
 }
 
-module.exports = Auth;
+module.exports = UserService;

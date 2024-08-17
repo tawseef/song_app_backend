@@ -9,7 +9,8 @@ const loginBodyValidaton = Joi.object().keys({
 // Joi Schema for Signup
 const signUpBodyValidation = Joi.object().keys({
     email: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
+    confirmPass: Joi.string().required()
 });
 
 module.exports = { loginBodyValidaton, signUpBodyValidation };

@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const routes = require("./routes/routes");
-// const routes = require("./routes/index");
 const helmet = require("helmet");
 
 app.use(helmet());

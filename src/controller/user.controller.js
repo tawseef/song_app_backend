@@ -7,8 +7,8 @@ const httpStatus = require("http-status");
 //   uploadingFile,
 // } = require("../service/service");
 
-const AuthService = require("../service/user.service");
-const AuthServiceInstance = new AuthService();
+const UserService = require("../service/user.service");
+const UserServiceInstance = new UserService();
 
 // async function handlePostRequest(req, res) {
 //   const { question } = req.body;
@@ -65,7 +65,7 @@ const AuthServiceInstance = new AuthService();
 // Sign-up Function
 async function handleUserSignup(req, res) {
   try {
-    const user = await AuthServiceInstance.signup(req.body);
+    const user = await UserServiceInstance.signup(req.body);
     res
       .status(httpStatus.OK)
       .json({ message: "Signup Successful", username: user.name });
@@ -77,28 +77,28 @@ async function handleUserSignup(req, res) {
 }
 
 // Login Function
-// async function handleUserLogin(req, res) {
-//   try {
-//     const result = await AuthServiceInstance.login(req.body);
-//     // Storing token to cookie
-//     res.cookie("token", result.token, {
-//       maxAge: 60 * 60 * 1000,
-//       httpOnly: true,
-//     });
+async function handleUserLogin(req, res) {
+  try {
+    const result = await UserServiceInstance.login(req.body);
+    // Storing token to cookie
+    res.cookie("token", result.token, {
+      maxAge: 60 * 60 * 1000,
+      httpOnly: true,
+    });
 
-//     res.json(result);
-//   } catch (error) {
-//     res
-//       .status(httpStatus.BAD_REQUEST)
-//       .json({ message: "User does not exist", error });
-//   }
-// }
+    res.json(result);
+  } catch (error) {
+    res
+      .status(httpStatus.BAD_REQUEST)
+      .json({ message: "User does not exist", error });
+  }
+}
 
 module.exports = {
   // handleSaveRequest,
   // handlePostRequest,
   // handleGetRequest,
   handleUserSignup,
-  // handleUserLogin,
+  handleUserLogin,
   // handleFileRequest,
 };
