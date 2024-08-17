@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-const {handleUserSignup, handleUserLogin} = require("../controller/user.controller");
+const {handleUserSignup, handleUserLogin, handlePlaylistCreation, handleGetAllPlayList } = require("../controller/user.controller");
 
 const { validateSchema } = require("../middleware/validate.middleware");
 
@@ -13,5 +13,7 @@ const validateLogin = validateSchema(loginBodyValidaton);
 
 router.post("/signup", validateSignup, handleUserSignup);
 router.post("/login", validateLogin, handleUserLogin);
+router.post("/createPlaylist", handlePlaylistCreation);
+router.get("/getAllPlaylists", handleGetAllPlayList);
 
 module.exports = router;

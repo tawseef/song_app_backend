@@ -31,7 +31,7 @@ class UserService {
       if (user) {
         // Token generation
         const token = this.generateWebToken(user._id);
-        
+        await User.findOneAndUpdate({_id: user._id},  { $set: { islogin: true} })
         return {
           isLoggedIn: true,
           userid: user._id,

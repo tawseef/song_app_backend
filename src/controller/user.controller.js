@@ -1,14 +1,9 @@
 const httpStatus = require("http-status");
 
-// const {
-//   saveInDataBase,
-//   getDataFromOpenAi,
-//   getUserMessages,
-//   uploadingFile,
-// } = require("../service/service");
-
 const UserService = require("../service/user.service");
 const UserServiceInstance = new UserService();
+
+const { createPlaylist, getAllPlaylist } = require("../service/playlist.service");
 
 // async function handlePostRequest(req, res) {
 //   const { question } = req.body;
@@ -25,42 +20,32 @@ const UserServiceInstance = new UserService();
 //   }
 // }
 
-// async function handleSaveRequest(req, res) {
-//   try {
-//     const response = await saveInDataBase(req.body);
-//     if (response) res.status(200).json(response);
-//     else res.status(404).json({ message: "User not found or update failed" });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// }
+// Get All Playlist
+async function handleGetAllPlayList(req, res) {
+  try {
+    const response = await getAllPlaylist(req.body);
+    console.log(response)
+    if (response) res.status(200).json(response);
+    else res.status(404).json({ message: "User not found or update failed" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
 
-// async function handleGetRequest(req, res) {
-//   const { user } = req.params;
-//   const username = user.toLowerCase();
-//   try {
-//     const response = await getUserMessages(username);
-//     if (response) res.status(200).json(response);
-//     else res.status(400).json([]);
-//   } catch (e) {
-//     res
-//       .status(500)
-//       .json({ success: "false", message: "Internal server error" });
-//   }
-// }
+// Playlist Creation
+async function handlePlaylistCreation(req, res) {
 
-// async function handleFileRequest(req, res) {
-//   const { path } = req.body;
-//   try {
-//     const response = await uploadingFile(path);
-//     if (response) res.status(200).json(response);
-//     else res.status(400).json([]);
-//   } catch (e) {
-//     res
-//       .status(500)
-//       .json({ success: "false", message: "Internal server error" });
-//   }
-// }
+  try {
+    const response = await createPlaylist(req.body);  
+    if (response) res.status(200).json(response);
+    else res.status(400).json([]);
+  } catch (e) {
+    res
+      .status(500)
+      .json({ success: "false", message: "Internal server error" });
+  }
+}
+
 
 // Sign-up Function
 async function handleUserSignup(req, res) {
@@ -97,8 +82,8 @@ async function handleUserLogin(req, res) {
 module.exports = {
   // handleSaveRequest,
   // handlePostRequest,
-  // handleGetRequest,
+  handleGetAllPlayList,
   handleUserSignup,
   handleUserLogin,
-  // handleFileRequest,
+  handlePlaylistCreation
 };
