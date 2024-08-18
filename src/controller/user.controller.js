@@ -40,13 +40,17 @@ async function handleUserLogin(req, res) {
 // Get All Playlist
 async function handleGetAllPlayList(req, res) {
   try {
-    const response = await getAllPlaylist(req.body);
+    // const email = req.query.email; 
+    const email = "test@mail.com";
+    // console.log(email)
+    const response = await getAllPlaylist({ email });
     if (response) res.status(200).json(response);
     else res.status(404).json({ message: "User not found or update failed" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 }
+
 
 // Playlist Creation
 async function handlePlaylistCreation(req, res) {
