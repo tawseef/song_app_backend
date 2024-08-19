@@ -8,7 +8,7 @@ const playlistSchema = new mongoose.Schema({
     unique: true,
     validate: (value) => validator.isEmail(value),
   },
-  playListname: [{ type: String, unique: true, required: true }]
+  playListname: [{ type: String, unique: true }]
 });
 
 const Playlist = mongoose.model("playlist", playlistSchema);

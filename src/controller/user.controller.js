@@ -3,7 +3,7 @@ const httpStatus = require("http-status");
 const UserService = require("../service/user.service");
 const UserServiceInstance = new UserService();
 
-const { createPlaylist, getAllPlaylist } = require("../service/playlist.service");
+const { createPlaylist, getAllPlaylist, addTracksToPlaylist } = require("../service/playlist.service");
 
 // Sign-up Function
 async function handleUserSignup(req, res) {
@@ -42,7 +42,6 @@ async function handleGetAllPlayList(req, res) {
   try {
     // const email = req.query.email; 
     const email = "test@mail.com";
-    // console.log(email)
     const response = await getAllPlaylist({ email });
     if (response) res.status(200).json(response);
     else res.status(404).json({ message: "User not found or update failed" });
@@ -65,9 +64,17 @@ async function handlePlaylistCreation(req, res) {
   }
 }
 
+async function handleAddTracks(req, res){
+  try{
+    const response = await addTracksToPlaylist(req.body);
+    res.status(200).json(response.data);
+  }catch(error){throw error}
+}
+
 module.exports = {
   handleGetAllPlayList,
   handleUserSignup,
   handleUserLogin,
-  handlePlaylistCreation
+  handlePlaylistCreation,
+  handleAddTracks
 };
