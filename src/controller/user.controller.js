@@ -3,7 +3,12 @@ const httpStatus = require("http-status");
 const UserService = require("../service/user.service");
 const UserServiceInstance = new UserService();
 
-const { createPlaylist, getAllPlaylist, addTracksToPlaylist } = require("../service/playlist.service");
+const {
+  createPlaylist,
+  getAllPlaylist,
+  addTracksToPlaylist,
+  getAllPlaylistData,
+} = require("../service/playlist.service");
 
 // Sign-up Function
 async function handleUserSignup(req, res) {
@@ -40,7 +45,7 @@ async function handleUserLogin(req, res) {
 // Get All Playlist
 async function handleGetAllPlayList(req, res) {
   try {
-    // const email = req.query.email; 
+    // const email = req.query.email;
     const email = "test@mail.com";
     const response = await getAllPlaylist({ email });
     if (response) res.status(200).json(response);
@@ -50,11 +55,10 @@ async function handleGetAllPlayList(req, res) {
   }
 }
 
-
 // Playlist Creation
 async function handlePlaylistCreation(req, res) {
   try {
-    const response = await createPlaylist(req.body);  
+    const response = await createPlaylist(req.body);
     if (response) res.status(200).json(response);
     else res.status(400).json([]);
   } catch (e) {
@@ -64,11 +68,24 @@ async function handlePlaylistCreation(req, res) {
   }
 }
 
-async function handleAddTracks(req, res){
-  try{
+async function handleAddTracks(req, res) {
+  try {
     const response = await addTracksToPlaylist(req.body);
+    console.log("response.data");
     res.status(200).json(response.data);
-  }catch(error){throw error}
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function handleGetAllTrackOfAllPlayList(req, res) {
+  const email = "test@mail.com";
+  try {
+    const response = await getAllPlaylistData(email);
+    res.status(200).json(response);
+  } catch (error) {
+    throw error;
+  }
 }
 
 module.exports = {
@@ -76,5 +93,6 @@ module.exports = {
   handleUserSignup,
   handleUserLogin,
   handlePlaylistCreation,
-  handleAddTracks
+  handleAddTracks,
+  handleGetAllTrackOfAllPlayList,
 };

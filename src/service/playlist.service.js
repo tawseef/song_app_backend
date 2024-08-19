@@ -2,41 +2,69 @@ const User = require("../model/user.model");
 const Playlist = require("../model/playlist.modal");
 const PlaylistTracks = require("../model/playlistTrack.modal");
 
+// Function to create a new playlist for a user
 const createPlaylist = async ({ email, playListname }) => {
   try {
-    const findingUser = await User.findOne({ email: email });
-    if (findingUser) {
-      const findingPlaylist = await Playlist.findOne({ email: email });
-      if (findingPlaylist) {
-        if (!findingPlaylist.playListname.includes(playListname)) {
-          findingPlaylist.playListname.push(playListname);
-          await findingPlaylist.save();
-          return findingPlaylist.playListname;
+    const findingUser = await User.findOne({ email });
+    if (!findingUser) {
+      return { success: false, msg: "No user found" };
+    }
+    let findingPlaylist = await Playlist.findOne({ email });
+    if (findingPlaylist) {
+      if (!findingPlaylist.playListname.includes(playListname)) {
+        findingPlaylist.playListname.push(playListname);
+        await findingPlaylist.save();
+        let playlistTracks = await PlaylistTracks.findOne({ email });
+        if (playlistTracks) {
+          playlistTracks.playListDetail.push({
+            playListname: playListname,
+            trackDetails: [],
+          });
+          await playlistTracks.save();
         } else {
-          return { message: "Playlist name already exists" };
-        }
+          await PlaylistTracks.create({
+            email: email,
+            playListDetail: [
+              {
+                playListname: playListname,
+                trackDetails: [],
+              },
+            ],
+          });
+        }   
+        return { success: true, msg: "Playlist created", data: findingPlaylist.playListname };
       } else {
-        console.log("playlist");
-        const playlist = await Playlist.create({
-          email: email,
-          playListname: [playListname],
-        });
-        return playlist;
+        return { success: false, msg: "Playlist name already exists" };
       }
     } else {
-      return { message: "No user found" };
+      const playlist = await Playlist.create({
+        email,
+        playListname: [playListname],
+      });
+        await PlaylistTracks.create({
+        email,
+        playListDetail: [
+          {
+            playListname: playListname,
+            trackDetails: [],
+          },
+        ],
+      });
+      return { success: true, msg: "Playlist created and added to PlaylistTracks", data: playlist };
     }
   } catch (error) {
-    throw error;
+    return { success: false, msg: "An error occurred", error };
   }
-};
+}
 
+
+// Function to get all playlists of a user
 const getAllPlaylist = async ({ email }) => {
   try {
     const findingUser = await User.findOne({ email: email });
     if (findingUser) {
       const getPlaylist = await Playlist.find({ email: email });
-      if (Boolean(getPlaylist[0])) return getPlaylist[0].playListname;
+      if (getPlaylist.length > 0) return getPlaylist[0].playListname;
       else return [];
     } else {
       return { message: "No Playlist Found" };
@@ -46,82 +74,51 @@ const getAllPlaylist = async ({ email }) => {
   }
 };
 
-// const addTracksToPlaylist = async (data) => {
-//   const { playListname, email, trackName, previewURL } = data;
-//   try {
-//     const findingUser = await User.findOne({ email: email });
-//     if (findingUser) {
-//       const getPlaylistOfUser = await Playlist.find({ email: email });
-//       if (getPlaylistOfUser) {
-//         const findingInUserPlaylist = getPlaylistOfUser[0].playListname.includes(playListname);
-//         console.log(findingInUserPlaylist)
-//         if (!findingInUserPlaylist) {
-//           const playlist = await PlaylistTracks.create({
-//             email: email,
-//             playListname: playListname,
-//             trackDetails: {
-//               trackName: trackName,
-//               previewURL: previewURL,
-//             },
-//           });
-//           return playlist;
-//         } else {
-//           console.log(">>>>>>>>>>>>>>>>>>>>>>>")
-//           const playlist = await PlaylistTracks.findOne({email:email})
-//           playlist.trackDetails.push({trackName: trackName, previewURL: previewURL});
-//           await playlist.save();
-//           return playlist;
-//           // return { msg: "Create playlist first" };
-//         }
-//       } else {
-//         return { msg: "Playlist not found" };
-//       }
-//     } else {
-//       return { msg: "User not found" };
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
-
-
-
+/////  Add tracks to playlist
 const addTracksToPlaylist = async (data) => {
   const { playListname, email, trackName, previewURL } = data;
   try {
-    const findingUser = await User.findOne({ email: email });
-    if (findingUser) {
-      const getPlaylistOfUser = await Playlist.findOne({ email: email, playListname: playListname });
-      if (getPlaylistOfUser) {
-        const playlist = await PlaylistTracks.findOne({ email: email, playListname: playListname });
-        if (playlist) {
-          if (Array.isArray(playlist.trackDetails)) {
-            playlist.trackDetails.push({ trackName: trackName, previewURL: previewURL });
-          } else {
-            playlist.trackDetails = [{ trackName: trackName, previewURL: previewURL }];
-          }
-          await playlist.save();
-          return playlist.trackDetails;
-        } else {
-          const newPlaylist = await PlaylistTracks.create({
-            email: email,
-            playListname: playListname,
-            trackDetails: [{ trackName: trackName, previewURL: previewURL }],
-          });
-          return newPlaylist;
-        }
+    const findingUser = await User.findOne({ email });
+    if (!findingUser) {
+      return { success: false, msg: "User not found" };
+    }
+    let playlistTracks = await PlaylistTracks.findOne({ email });
+    if (playlistTracks) {
+      const existingPlaylist = playlistTracks.playListDetail.find(
+        (playlist) => playlist.playListname === playListname
+      );
+
+      if (existingPlaylist) {
+        existingPlaylist.trackDetails.push({ trackName, previewURL });
+        await playlistTracks.save();
+        return {
+          success: true,
+          msg: "Track added to the existing playlist",
+          data: existingPlaylist.trackDetails,
+        };
       } else {
-        return { msg: "Playlist not found" };
+        return { success: false, msg: "Playlist not found in PlaylistTracks" };
       }
     } else {
-      return { msg: "User not found" };
+      return { success: false, msg: "PlaylistTracks document not found" };
     }
   } catch (error) {
-    throw error;
+    if (error.code === 11000) {
+      return { success: false, msg: "A playlist with this name already exists for this user." };
+    }
+    return { success: false, msg: "An error occurred", error };
   }
 };
 
 
+const getAllPlaylistData=async (email) =>{
+  try{
+    const findData = await PlaylistTracks.findOne({email:email})
+    return findData;
+  }catch(error){throw error}
 
-module.exports = { createPlaylist, getAllPlaylist, addTracksToPlaylist };
+}
+
+
+module.exports = { createPlaylist, getAllPlaylist, addTracksToPlaylist, getAllPlaylistData };
