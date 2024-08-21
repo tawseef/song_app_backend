@@ -24,7 +24,7 @@ class UserService {
   };
 
   // User Login
-  login = async ({ email, password }) => {
+  login = async (email, password) => {
     try {
       // Password verification
       const user = await this.verifyPassword(email, password);
@@ -48,6 +48,7 @@ class UserService {
   verifyPassword = async (email, password) => {
     try {
       const user = await User.findOne({ email: email});
+      if(!user) return null;
       const isValid = await bcrypt.compare(password, user.password);
       if (isValid) return user;
       else return null;

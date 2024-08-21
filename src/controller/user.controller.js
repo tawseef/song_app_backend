@@ -28,14 +28,9 @@ async function handleUserSignup(req, res) {
 
 // Login Function
 async function handleUserLogin(req, res) {
+  const { email, password } = req.body;
   try {
-    const result = await UserServiceInstance.login(req.body);
-    // console.log(result);
-    // Storing token to cookie
-    // res.cookie("token", result.token, {
-    //   maxAge: 60 * 60 * 1000,
-    //   httpOnly: true,
-    // });
+    const result = await UserServiceInstance.login(email, password);
     res.status(httpStatus.OK).json(result);
   } catch (error) {
     res
