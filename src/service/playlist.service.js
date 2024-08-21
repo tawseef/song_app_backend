@@ -111,14 +111,37 @@ const addTracksToPlaylist = async (data) => {
   }
 };
 
-
-const getAllPlaylistData=async (email) =>{
+// Get All Playlist for a USER
+const getAllPlaylistData= async (email) =>{
   try{
     const findData = await PlaylistTracks.findOne({email:email})
     return findData;
   }catch(error){throw error}
+}
 
+// Delete Tracks
+const deteleTracksFromPlaylist = async (data) => {
+  const { email, playListname, trackName, previewURL } = data;
+  try {
+    const updatedPlaylist = await PlaylistTracks.findOneAndUpdate(
+      { email, "playListDetail.playListname": playListname }, // Query to find the playlist
+      {
+        $pull: {
+          "playListDetail.$.trackDetails": { trackName, previewURL } // Pull the track from the array
+        }
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedPlaylist) {
+      throw new Error('Playlist or track not found');
+    }
+    return updatedPlaylist;
+  } catch (error) {
+    console.error('Error deleting track:', error);
+    throw error;
+  }
 }
 
 
-module.exports = { createPlaylist, getAllPlaylist, addTracksToPlaylist, getAllPlaylistData };
+module.exports = { createPlaylist, getAllPlaylist, addTracksToPlaylist, getAllPlaylistData, deteleTracksFromPlaylist };

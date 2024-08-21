@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-const {handleUserSignup, handleUserLogin, handlePlaylistCreation, handleGetAllPlayList, handleAddTracks, handleGetAllTrackOfAllPlayList } = require("../controller/user.controller");
+const {handleUserSignup, handleUserLogin, handlePlaylistCreation, handleGetAllPlayList, handleAddTracks, handleGetAllTrackOfAllPlayList, handleDeleteTracks } = require("../controller/user.controller");
 
 const { validateSchema } = require("../middleware/validate.middleware");
 
@@ -17,5 +17,6 @@ router.post("/createPlaylist", handlePlaylistCreation);
 router.get("/getAllPlaylists", handleGetAllPlayList);
 router.get("/getTracksDetailsOfAllPlaylists", handleGetAllTrackOfAllPlayList);
 router.post("/addTracksToPlaylist", handleAddTracks);
+router.delete("/deleteTracksFromPlaylist", handleDeleteTracks);
 
 module.exports = router;
