@@ -31,7 +31,13 @@ async function handleUserLogin(req, res) {
   const { email, password } = req.body;
   try {
     const result = await UserServiceInstance.login(email, password);
-    res.status(httpStatus.OK).json(result);
+    if(result.isLoggedIn){
+      res.status(httpStatus.OK).json(result);
+    }else{
+      res.status(httpStatus.UNAUTHORIZED).json({
+        "isLoggedIn": false
+    });
+    }
   } catch (error) {
     res
       .status(httpStatus.BAD_REQUEST)
@@ -42,9 +48,8 @@ async function handleUserLogin(req, res) {
 // Get All Playlist
 async function handleGetAllPlayList(req, res) {
   try {
-    // const email = req.query.email;
-    const email = "test@mail.com";
-    const response = await getAllPlaylist({ email });
+    const {email} = req.query;
+    const response = await getAllPlaylist(email);
     if (response) res.status(200).json(response);
     else res.status(httpStatus.NOT_FOUND).json({ message: "User not found or update failed" });
   } catch (error) {
@@ -69,7 +74,6 @@ async function handlePlaylistCreation(req, res) {
 async function handleAddTracks(req, res) {
   try {
     const response = await addTracksToPlaylist(req.body);
-    // console.log("response.data");
     res.status(httpStatus.OK).json(response.data);
   } catch (error) {
     throw error;
@@ -78,7 +82,7 @@ async function handleAddTracks(req, res) {
 
 // Get All Tracks Of All Playlist Of A User
 async function handleGetAllTrackOfAllPlayList(req, res) {
-  const email = "test@mail.com";
+  const {email} = req.query;
   try {
     const response = await getAllPlaylistData(email);
     res.status(httpStatus.OK).json(response);

@@ -59,12 +59,12 @@ const createPlaylist = async ({ email, playListname }) => {
 
 
 // Function to get all playlists of a user
-const getAllPlaylist = async ({ email }) => {
+const getAllPlaylist = async (email) => {
   try {
     const findingUser = await User.findOne({ email: email });
     if (findingUser) {
       const getPlaylist = await Playlist.find({ email: email });
-      if (getPlaylist.length > 0) return getPlaylist[0].playListname;
+      if (getPlaylist[0].playListname.length > 0) return getPlaylist[0].playListname;
       else return [];
     } else {
       return { message: "No Playlist Found" };
