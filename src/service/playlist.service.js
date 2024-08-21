@@ -124,13 +124,13 @@ const deteleTracksFromPlaylist = async (data) => {
   const { email, playListname, trackName, previewURL } = data;
   try {
     const updatedPlaylist = await PlaylistTracks.findOneAndUpdate(
-      { email, "playListDetail.playListname": playListname }, // Query to find the playlist
+      { email, "playListDetail.playListname": playListname },
       {
         $pull: {
-          "playListDetail.$.trackDetails": { trackName, previewURL } // Pull the track from the array
+          "playListDetail.$.trackDetails": { trackName, previewURL } 
         }
       },
-      { new: true } // Return the updated document
+      { new: true } 
     );
 
     if (!updatedPlaylist) {
@@ -143,5 +143,27 @@ const deteleTracksFromPlaylist = async (data) => {
   }
 }
 
+// Delete Full Playlist
+const deteleFullPlaylist = async (data) =>{
+  const {email, playListname} = data
+  try {
+    const playlistTracksResult = await PlaylistTracks.updateOne(
+      { email },
+      { $pull: { playListDetail: { playListname: playListname } } }
+    );
+    const playlistResult = await Playlist.updateOne(
+      { email },
+      { $pull: { playListname: playListname } }
+    );
+    if (playlistTracksResult.modifiedCount === 0 && playlistResult.modifiedCount === 0) {
+      return { message: "No playlist found to delete." };
+    }
 
-module.exports = { createPlaylist, getAllPlaylist, addTracksToPlaylist, getAllPlaylistData, deteleTracksFromPlaylist };
+    return { message: "Playlist deleted successfully." };
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+module.exports = { createPlaylist, getAllPlaylist, addTracksToPlaylist, getAllPlaylistData, deteleTracksFromPlaylist, deteleFullPlaylist };

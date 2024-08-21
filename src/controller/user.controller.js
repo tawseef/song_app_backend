@@ -8,7 +8,8 @@ const {
   getAllPlaylist,
   addTracksToPlaylist,
   getAllPlaylistData,
-  deteleTracksFromPlaylist
+  deteleTracksFromPlaylist,
+  deteleFullPlaylist
 } = require("../service/playlist.service");
 
 // Sign-up Function
@@ -100,6 +101,15 @@ async function handleDeleteTracks(req, res) {
   }
 }
 
+async function handleDeletePlaylist(req, res) {
+  try {
+    const response = await deteleFullPlaylist(req.body);
+    res.status(200).json(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   handleGetAllPlayList,
   handleUserSignup,
@@ -107,5 +117,6 @@ module.exports = {
   handlePlaylistCreation,
   handleAddTracks,
   handleGetAllTrackOfAllPlayList,
-  handleDeleteTracks
+  handleDeleteTracks,
+  handleDeletePlaylist
 };
