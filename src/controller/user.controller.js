@@ -33,7 +33,6 @@ async function handleUserLogin(req, res) {
       maxAge: 60 * 60 * 1000,
       httpOnly: true,
     });
-
     res.json(result);
   } catch (error) {
     res
@@ -68,16 +67,18 @@ async function handlePlaylistCreation(req, res) {
   }
 }
 
+// Add Tracks to Playlist
 async function handleAddTracks(req, res) {
   try {
     const response = await addTracksToPlaylist(req.body);
-    console.log("response.data");
+    // console.log("response.data");
     res.status(200).json(response.data);
   } catch (error) {
     throw error;
   }
 }
 
+// Get All Tracks Of All Playlist Of A User
 async function handleGetAllTrackOfAllPlayList(req, res) {
   const email = "test@mail.com";
   try {
