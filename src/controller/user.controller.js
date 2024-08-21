@@ -31,10 +31,10 @@ async function handleUserLogin(req, res) {
   try {
     const result = await UserServiceInstance.login(req.body);
     // Storing token to cookie
-    res.cookie("token", result.token, {
-      maxAge: 60 * 60 * 1000,
-      httpOnly: true,
-    });
+    // res.cookie("token", result.token, {
+    //   maxAge: 60 * 60 * 1000,
+    //   httpOnly: true,
+    // });
     res.json(result);
   } catch (error) {
     res
