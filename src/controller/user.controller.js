@@ -30,6 +30,7 @@ async function handleUserSignup(req, res) {
 async function handleUserLogin(req, res) {
   try {
     const result = await UserServiceInstance.login(req.body);
+    // console.log(result);
     // Storing token to cookie
     // res.cookie("token", result.token, {
     //   maxAge: 60 * 60 * 1000,
@@ -50,9 +51,9 @@ async function handleGetAllPlayList(req, res) {
     const email = "test@mail.com";
     const response = await getAllPlaylist({ email });
     if (response) res.status(200).json(response);
-    else res.status(404).json({ message: "User not found or update failed" });
+    else res.status(httpStatus.NOT_FOUND).json({ message: "User not found or update failed" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
   }
 }
 
@@ -61,10 +62,10 @@ async function handlePlaylistCreation(req, res) {
   try {
     const response = await createPlaylist(req.body);
     if (response) res.status(200).json(response);
-    else res.status(400).json([]);
+    else res.status(httpStatus.NOT_FOUND).json([]);
   } catch (e) {
     res
-      .status(500)
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
       .json({ success: "false", message: "Internal server error" });
   }
 }
@@ -74,7 +75,7 @@ async function handleAddTracks(req, res) {
   try {
     const response = await addTracksToPlaylist(req.body);
     // console.log("response.data");
-    res.status(200).json(response.data);
+    res.status(httpStatus.OK).json(response.data);
   } catch (error) {
     throw error;
   }
@@ -85,7 +86,7 @@ async function handleGetAllTrackOfAllPlayList(req, res) {
   const email = "test@mail.com";
   try {
     const response = await getAllPlaylistData(email);
-    res.status(200).json(response);
+    res.status(httpStatus.OK).json(response);
   } catch (error) {
     throw error;
   }
@@ -95,7 +96,7 @@ async function handleGetAllTrackOfAllPlayList(req, res) {
 async function handleDeleteTracks(req, res) {
   try {
     const response = await deteleTracksFromPlaylist(req.body);
-    res.status(200).json(response);
+    res.status(httpStatus.OK).json(response);
   } catch (error) {
     throw error;
   }
@@ -104,7 +105,7 @@ async function handleDeleteTracks(req, res) {
 async function handleDeletePlaylist(req, res) {
   try {
     const response = await deteleFullPlaylist(req.body);
-    res.status(200).json(response);
+    res.status(httpStatus.OK).json(response);
   } catch (error) {
     throw error;
   }

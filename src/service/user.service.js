@@ -47,7 +47,7 @@ class UserService {
   // Password verification for Login purpose
   verifyPassword = async (email, password) => {
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: email});
       const isValid = await bcrypt.compare(password, user.password);
       if (isValid) return user;
       else return null;
