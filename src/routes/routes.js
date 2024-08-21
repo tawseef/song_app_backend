@@ -12,11 +12,7 @@ const validateSignup = validateSchema(signUpBodyValidation);
 const validateLogin = validateSchema(loginBodyValidaton);
 
 router.post("/signup", validateSignup, handleUserSignup);
-router.post("/login", validateLogin,(req, res, next)=>{
-    console.log("Req Method", req.method)
-    console.log("Req URL", req.url)
-    next();
-}, handleUserLogin);
+router.post("/login", validateLogin, handleUserLogin);
 router.post("/createPlaylist", handlePlaylistCreation);
 router.get("/getAllPlaylists", handleGetAllPlayList);
 router.get("/getTracksDetailsOfAllPlaylists", handleGetAllTrackOfAllPlayList);
