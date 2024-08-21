@@ -35,7 +35,7 @@ async function handleUserLogin(req, res) {
     //   maxAge: 60 * 60 * 1000,
     //   httpOnly: true,
     // });
-    res.json(result);
+    res.status(httpStatus.OK).json(result);
   } catch (error) {
     res
       .status(httpStatus.BAD_REQUEST)
