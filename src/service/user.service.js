@@ -22,27 +22,42 @@ class UserService {
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   };
-
+  
   // User Login
   login = async (email, password) => {
     try {
-      // Password verification
-      const user = await this.verifyPassword(email, password);
-      if (user) {
-        // Token generation
-        const token = this.generateWebToken(user._id);
-        return {
-          isLoggedIn: true,
-          userid: user._id,
-          token: token,
-        };
-      } else {
+      // Finding User in User Database
+      const findUser = await this.findUserinDB(email);
+      if(findUser){
+        // Password verification
+        const user = await this.verifyPassword(email, password);
+        if (user) {
+          // Token generation
+          const token = this.generateWebToken(user._id);
+          return {
+            isLoggedIn: true,
+            userid: user._id,
+            token: token,
+          };
+        } else {
+          return { isLoggedIn: false };
+        }
+      }else{
         return { isLoggedIn: false };
       }
     } catch (error) {
       throw error;
     }
   };
+
+  // Finding User in User Database
+  findUserinDB = async (email) =>{
+    try{
+      const user = await User.find({email});
+      if(user[0]) return user;
+      else return null;
+    }catch(error){ throw error}
+  }
 
   // Password verification for Login purpose
   verifyPassword = async (email, password) => {
