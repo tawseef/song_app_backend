@@ -41,7 +41,7 @@ async function handleUserLogin(req, res) {
   } catch (error) {
     res
       .status(httpStatus.BAD_REQUEST)
-      .json({ message: "User does not exist", error });
+      .json({ message: "Bad Request", error });
   }
 }
 
