@@ -8,9 +8,14 @@ class UserService {
   // User Signup
   signup = async (data) => {
     try {
-      const hashedPassword = await this.hashingPassword(data.password);
-      const result = await User.create({ email: data.email, password: hashedPassword });
-      return result;
+      const userInDB = await this.findUserinDB(data.email)
+      if(!userInDB){
+        const hashedPassword = await this.hashingPassword(data.password);
+        const result = await User.create({ email: data.email, password: hashedPassword });
+        return result;
+      }else{
+        return userInDB;
+      }
     } catch (error) {
       throw error;
     }

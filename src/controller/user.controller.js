@@ -16,13 +16,19 @@ const {
 async function handleUserSignup(req, res) {
   try {
     const user = await UserServiceInstance.signup(req.body);
-    res
-      .status(httpStatus.OK)
-      .json({ message: "Signup Successful", username: user.name });
+    if (user){
+      res.status(httpStatus.UNAUTHORIZED).json({
+        "isLoggedIn": false
+      });
+    }else{
+      res
+        .status(httpStatus.OK)
+        .json({ message: "Signup Successful", username: user.name });
+    }
   } catch (error) {
     res
       .status(httpStatus.BAD_REQUEST)
-      .json({ message: "Check credential", error });
+      .json({ error: error });
   }
 }
 
